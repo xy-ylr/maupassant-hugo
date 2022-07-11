@@ -1,5 +1,17 @@
 # Maupassant
 
+hugo博客maupassant主题, 从[飞雪无情](https://github.com/flysnow-org/maupassant-hugo)forked, 并做里一些小修改.
+1. 自定义菜单加入归档  
+原主题只归档content目录下post/posts目录的文章, 我将博客文章分了'计算机', '财经', '健身'等几个大分类, 并分别创建独立目录(未采用所有文章都放在posts目录下)  
+修改的位置是`layouts/archives/single.html`和`layouts/index.html`
+
+2. hugo新建文章的模板default.md
+原主题的模板不包含`keywords`和`description`, 不过仅修改主题下的模板, 好像无法生效, 因为`/archetypes/defalut.md`根目录下已存在模板
+修改的位置是`archetypes/defalut.md`
+
+3. 侧边栏调整(计划中)
+原主题的侧边栏是分类/标签/友情链接等在右边, 文章目录在左边, 且当文章目录比较长的时候显示不完整, 考虑将两边互换一下, 或者修改css使得文章目录较长的时候能自动换行(应该有这个功能)
+
 Maupassant theme, ported to Hugo.
 
 1. 预览效果:[飞雪无情的博客](http://www.flysnow.org)

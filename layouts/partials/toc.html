@@ -14,7 +14,8 @@
         -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
         box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
         word-wrap: break-word;
-        white-space: nowrap;
+        /* nowrap文字溢出不会换行, 注释掉, 或者改成normal */
+        /* white-space: nowrap; */
         -webkit-box-sizing: border-box;
         box-sizing: border-box;
         z-index: 999;
@@ -50,7 +51,8 @@
 
     .post-toc .post-toc-content ul ul {
         padding-left: 15px;
-        display: none;
+        /* 显示二级目录 */
+        /* display: none; */
     }
 
     @media print,

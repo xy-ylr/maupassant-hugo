@@ -9,8 +9,10 @@ hugo博客maupassant主题, 从[飞雪无情](https://github.com/flysnow-org/mau
 原主题的模板不包含`keywords`和`description`, 不过仅修改主题下的模板, 好像无法生效, 因为`/archetypes/defalut.md`根目录下已存在模板
 修改的位置是`archetypes/defalut.md`
 
-3. 侧边栏调整(计划中)
-原主题的侧边栏是分类/标签/友情链接等在右边, 文章目录在左边, 且当文章目录比较长的时候显示不完整, 考虑将两边互换一下, 或者修改css使得文章目录较长的时候能自动换行(应该有这个功能)
+3. 侧边栏调整-文章目录
+原主题文章只显示一级目录, 二级目录被隐藏了, 而且目录文字过长不会自动换行, 修改相应的css
+修改位置: `layouts/partials/toc.html`
+
 
 Maupassant theme, ported to Hugo.
 

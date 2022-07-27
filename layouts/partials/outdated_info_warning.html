@@ -1,0 +1,29 @@
+
+{{ if or .Params.enableOutdatedInfoWarning (and .Site.Params.outdatedInfoWarning.enable (ne .Params.enableOutdatedInfoWarning false)) }}
+    {{ $daysAgo := div (sub now.Unix .Lastmod.Unix) 86400 }}
+    {{ $hintThreshold := .Site.Params.outdatedInfoWarning.hint | default 30 }}
+    {{ $warnThreshold := .Site.Params.outdatedInfoWarning.warn | default 180 }}
+
+    {{ $updateTime := .Lastmod }}
+    {{ if .GitInfo }}
+        {{ if lt .GitInfo.AuthorDate.Unix .Lastmod.Unix }}
+            {{ $updateTime := .GitInfo.AuthorDate }}
+        {{ end }}
+    {{ end }}
+
+{{ if gt $daysAgo $hintThreshold }}
+<div class="post-outdated">
+    {{ if gt $daysAgo $warnThreshold }}
+    <div class="warn">
+    {{ else }}
+    <div class="hint">
+    {{ end }}
+        <p>【注意】本文最后更新于 
+            <span class="timeago" datetime="{{ dateFormat "2006-01-02T15:04:05" $updateTime }}" title="{{ dateFormat "2006-01-02" $updateTime }}">
+            {{ dateFormat "2006-01-02" $updateTime }}
+            </span>，文中内容可能已过时，请谨慎使用。
+        </p>
+    </div>
+</div>
+{{ end }}
+{{ end }}

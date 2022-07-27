@@ -1,17 +1,156 @@
 # Maupassant
 
-hugo博客maupassant主题, 从[飞雪无情](https://github.com/flysnow-org/maupassant-hugo)forked, 并做里一些小修改.
-1. 自定义菜单加入归档  
-原主题只归档content目录下post/posts目录的文章, 我将博客文章分了'计算机', '财经', '健身'等几个大分类, 并分别创建独立目录(未采用所有文章都放在posts目录下)  
-修改的位置是`layouts/archives/single.html`和`layouts/index.html`
+hugo博客maupassant主题, 从[飞雪无情](https://github.com/flysnow-org/maupassant-hugo)forked, 并做了一些小修改.
 
-2. hugo新建文章的模板default.md
-原主题的模板不包含`keywords`和`description`, 不过仅修改主题下的模板, 好像无法生效, 因为`/archetypes/defalut.md`根目录下已存在模板
-修改的位置是`archetypes/defalut.md`
+[四十荀的博客](https://xy-ylr.github.io/)
 
-3. 侧边栏调整-文章目录
+#### 主题自定义菜单纳入文章归档
+
+原主题只归档content目录下post, posts目录的文章, 但是我将博客文章分了'计算机', '健身'等几个大分类, 并分别创建独立目录(未将所有文章都放在posts目录下), 结果我新建的几大分类的文章在博客首页/归档页都不会出现, 以及右侧边栏的'最近文章'也不会出现.      
+
+修改的位置是主题目录下的`layouts/archives/single.html`, `layouts/partials/recent_post.html`和`layouts/index.html`, 将`it`, `fitness`等分类目录名加入数组:  
+
+```html
+    {{ range (where (where .Site.Pages "Type" "in" (slice "post" "posts" "it" "fitness")) "Kind" "page").GroupByDate "2006" }}
+```
+
+还有一个版权申明模板页面`layouts/partials/recent_post.html`, 默认也是只有post或者posts目录下的文章会有版权申明, 也需要修改.
+
+#### 主题文章目录长度溢出自动换行
+
 原主题文章只显示一级目录, 二级目录被隐藏了, 而且目录文字过长不会自动换行, 修改相应的css
-修改位置: `layouts/partials/toc.html`
+
+修改位置: `layouts/partials/toc.html`, 注释了2行css, 其他未改动.
+
+```css
+<style type="text/css">
+    .post-toc {
+        /* nowrap文字溢出不会换行, 注释掉, 或者改成normal */
+        /* white-space: nowrap; */
+        ...
+    }
+    .post-toc .post-toc-content ul ul {
+        /* 显示二级目录 */
+        /* display: none; */
+        ...
+    }
+</style>
+```
+
+#### 代码块无法对齐
+
+代码块部分的渲染效果, 原主题左边的行号和右边的代码无法对齐. 该主题使用的是hugo原生的代码高亮方式, 阅读[官方文档 - 代码高亮配置](https://gohugo.io/getting-started/configuration-markup#highlight), 经过调试发现, 只要调整`lineNumbersInTable`参数即可, 修改后`config.toml`相关配置: 
+
+```toml
+## 配置代码高亮
+[markup]
+  [markup.highlight]
+    lineNos = true
+    lineNumbersInTable = false      ## 默认为true,行号与代码块相互独立, 导致行号与代码块无法对齐
+    style = 'solarized-dark'
+    tabWidth = 4
+```
+
+#### 添加文章预计阅读时间
+
+```html
+        {{if .Site.Params.moreMeta }}
+        <div class="post-meta">
+            <span>|</span>
+            <span> 共约{{ .WordCount }}字 </span>
+            <span> 预计阅读时间{{ .ReadingTime }}分钟</span>
+        </div>
+        {{ end }}
+```
+
+修改位置: `layouts/_default/section.html`, 分类列表页模板; `/layouts/_default/single.html`, 文章详情页模板; `/layouts/index.html`, 博客站点首页模板
+
+#### 添加文章可能过时提示
+
+在`config.toml`配置文件添加如下配置
+
+```toml
+  enableGitInfo = true   # 可根据 Git 中的提交生成最近更新记录。
+  
+  [params.outdatedInfoWarning]
+    enable = true
+    hint = 30               # 如果文章最后更新于这天数之前，显示提醒
+    warn = 180              # 如果文章最后更新于这天数之前，显示警告
+
+```
+
+博客系统主目录下的MD文章生成模板`archetypes/default.md`的Front Matter部分添加`lastmod="{{ .Date }}"`.
+
+文章详情页`/layouts/_default/single.html`相关位置添加最后两行代码
+
+```html
+        {{ if .Params.toc }}
+        <div class="clear" style="display: none">
+            <div class="toc-article">
+                <div class="toc-title">文章目录</div>
+            </div>
+        </div>
+        {{ end }}
+        <!-- Outdated Info Warning 提示文章内容可能过时-->
+        {{ partial "outdated_info_warning" .}}
+```
+
+新建`/layouts/partials/outdated_info_warning.html`模板页面, 具体内容
+
+```html
+{{ if or .Params.enableOutdatedInfoWarning (and .Site.Params.outdatedInfoWarning.enable (ne .Params.enableOutdatedInfoWarning false)) }}
+    {{ $daysAgo := div (sub now.Unix .Lastmod.Unix) 86400 }}
+    {{ $hintThreshold := .Site.Params.outdatedInfoWarning.hint | default 30 }}
+    {{ $warnThreshold := .Site.Params.outdatedInfoWarning.warn | default 180 }}
+
+    {{ $updateTime := .Lastmod }}
+    {{ if .GitInfo }}
+        {{ if lt .GitInfo.AuthorDate.Unix .Lastmod.Unix }}
+            {{ $updateTime := .GitInfo.AuthorDate }}
+        {{ end }}
+    {{ end }}
+
+{{ if gt $daysAgo $hintThreshold }}
+<div class="post-outdated">
+    {{ if gt $daysAgo $warnThreshold }}
+    <div class="warn">
+    {{ else }}
+    <div class="hint">
+    {{ end }}
+        <p>【注意】本文最后更新于 
+            <span class="timeago" datetime="{{ dateFormat "2006-01-02T15:04:05" $updateTime }}" title="{{ dateFormat "2006-01-02" $updateTime }}">
+            {{ dateFormat "2006-01-02" $updateTime }}
+            </span>，文中内容可能已过时，请谨慎使用。
+        </p>
+    </div>
+</div>
+{{ end }}
+{{ end }}
+```
+
+maupassant主题的`/static/css`目录的`sytle.css`添加如下内容.
+
+```css
+.post .post-outdated .hint {
+    position:relative;
+    margin-top:20px;
+    margin-bottom:20px;
+    padding:5px 10px;
+    border-left:4px solid #42acf3;
+    background-color:#eff5ff;
+    border-color:#42acf3
+   }
+.post .post-outdated .warn {
+    position:relative;
+    margin-top:20px;
+    margin-bottom:20px;
+    padding:5px 10px;
+    border-left:4px solid #f9cf63;
+    background-color:#ffffc0;
+    border-color:#f9cf63
+   }
+```
+
 
 
 Maupassant theme, ported to Hugo.

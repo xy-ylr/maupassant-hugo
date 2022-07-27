@@ -36,6 +36,8 @@
             </div>
         </div>
         {{ end }}
+        <!-- Outdated Info Warning 提示文章内容可能过时-->
+        {{ partial "outdated_info_warning" .}}
         <div class="post-content">
             {{ .Content }}
         </div>

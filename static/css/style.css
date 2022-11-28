@@ -421,6 +421,9 @@ textarea {
 .post-content ul li{
     text-indent: .5em;
 }
+.post-content ul ul{
+    margin: 0;
+}
 .archive-title {
     padding-top:20px;
     color:#999;

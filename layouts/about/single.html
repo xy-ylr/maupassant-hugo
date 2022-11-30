@@ -16,21 +16,6 @@
         <div class="post-content">
             {{ .Content }}
         </div>
-
-        {{ partial "copyright" .}}
-
-
-        <div class="post-meta meta-tags">
-            {{ if and (isset .Params "tags") .Params.tags }}
-            <ul class="clearfix">
-                {{ range .Params.Tags }}
-                <li><a href='{{ "tags/" | relURL }}{{ . | urlize }}'>{{ . }}</a></li>
-                {{ end }}
-            </ul>
-            {{ else }}
-            没有标签
-            {{ end }}
-        </div>
     </article>
     {{ partial "comments" . }}
 </div>

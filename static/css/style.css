@@ -416,11 +416,12 @@ textarea {
     overflow: auto;
     padding: .5em 2.4em;
     border-radius: 3px;
-    margin:1.8em 0;
+    margin:1em 0;   /*感觉默认的1.8em太多了*/
 }
 .post-content ul li{
     text-indent: .5em;
 }
+/* 防止出现嵌套列表，新增属性 */
 .post-content ul ul{
     margin: 0;
 }

@@ -5,9 +5,12 @@
         <header>
             <h1 class="post-title">{{ .Title }}</h1>
         </header>
-        <date class="post-meta meta-date">
-            {{ .Date.Year }}年{{ printf "%d" .Date.Month }}月{{ .Date.Day }}日
-        </date>
+        <div class="post-meta">
+            <span>最新修改</span>
+            <date class="post-meta meta-date">
+                {{ .Lastmod.Year }}年{{ printf "%d" .Lastmod.Month }}月{{ .Lastmod.Day }}日
+            </date>
+        </div>
         {{ with .Params.Categories }}
         <div class="post-meta">
             <span>|</span>

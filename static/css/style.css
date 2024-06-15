@@ -405,7 +405,8 @@ textarea {
 .post-content pre{
     padding: 1em;
 }
-.post-content code{
+.post-content li code{
+    /* 为有序列表、无序列表中的行内代码添加背景色等样式 */
     display:inline;
     padding: .2em .4em;
     margin: 0;
